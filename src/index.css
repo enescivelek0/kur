@@ -31,3 +31,14 @@ body {
 @utility tabular {
   font-variant-numeric: tabular-nums;
 }
+
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[ticker_40s_linear_infinite\] {
+    animation: none;
+  }
+}

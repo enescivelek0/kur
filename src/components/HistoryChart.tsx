@@ -2,17 +2,12 @@ import { useMemo, useState } from 'react'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { fmtDate, fmtPct, fmtRate } from '../lib/format'
 import { useHistory } from '../lib/queries'
+import { useT } from '../i18n'
 
-const RANGES = [
-  { label: '1H', days: 7 },
-  { label: '1A', days: 30 },
-  { label: '3A', days: 90 },
-  { label: '1Y', days: 365 },
-  { label: '5Y', days: 1825 },
-  { label: '10Y', days: 3650 },
-] as const
+const RANGES = [7, 30, 90, 365, 1825, 3650]
 
 export default function HistoryChart({ from, to }: { from: string; to: string }) {
+  const t = useT().chart
   const [days, setDays] = useState<number>(90)
   const { data = [], isLoading, isFetching, isError } = useHistory(from, to, days)
 
@@ -36,21 +31,11 @@ export default function HistoryChart({ from, to }: { from: string; to: string })
     <section className="card">
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <h2 className="mr-auto text-sm font-semibold uppercase tracking-wider text-zinc-500">
-          {from}/{to} Geçmişi
+          {from}/{to} {t.history}
         </h2>
         <div role="tablist" className="flex rounded-lg bg-zinc-100 p-0.5 dark:bg-white/5">
-          {RANGES.map((r) => (
-            <button
-              key={r.label}
-              role="tab"
-              aria-selected={days === r.days}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${
-                days === r.days ? 'bg-white shadow-sm dark:bg-zinc-800' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100'
-              }`}
-              onClick={() => setDays(r.days)}
-            >
-              {r.label}
-            </button>
+          {RANGES.map((d, i) => (
+            <RangeBtn key={d} label={t.ranges[i]} active={days === d} onClick={() => setDays(d)} />
           ))}
         </div>
       </div>
@@ -58,10 +43,10 @@ export default function HistoryChart({ from, to }: { from: string; to: string })
       {stats && (
         <dl className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            ['Değişim', fmtPct(stats.change), up ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'],
-            ['En düşük', fmtRate(stats.min), ''],
-            ['En yüksek', fmtRate(stats.max), ''],
-            ['Ortalama', fmtRate(stats.avg), ''],
+            [t.change, fmtPct(stats.change), up ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'],
+            [t.min, fmtRate(stats.min), ''],
+            [t.max, fmtRate(stats.max), ''],
+            [t.avg, fmtRate(stats.avg), ''],
           ].map(([k, v, cls]) => (
             <div key={k} className="rounded-xl bg-zinc-50 px-3 py-2 dark:bg-white/[0.03]">
               <dt className="text-xs text-zinc-500">{k}</dt>
@@ -73,9 +58,9 @@ export default function HistoryChart({ from, to }: { from: string; to: string })
 
       <div className={`h-64 transition-opacity sm:h-80 ${isFetching ? 'opacity-60' : ''}`}>
         {from === to ? (
-          <Empty text="Grafik için iki farklı para birimi seç." />
+          <Empty text={t.same} />
         ) : isError ? (
-          <Empty text="Geçmiş veriler alınamadı." />
+          <Empty text={t.error} />
         ) : isLoading ? (
           <div className="h-full animate-pulse rounded-xl bg-zinc-100 dark:bg-white/5" />
         ) : (
@@ -130,3 +115,18 @@ const Empty = ({ text }: { text: string }) => (
     {text}
   </div>
 )
+
+function RangeBtn({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      role="tab"
+      aria-selected={active}
+      className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${
+        active ? 'bg-white shadow-sm dark:bg-zinc-800' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100'
+      }`}
+      onClick={onClick}
+    >
+      {label}
+    </button>
+  )
+}

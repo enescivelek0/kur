@@ -1,7 +1,10 @@
+import { Star } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router'
 import { fmtPct, fmtRate } from '../lib/format'
 import { useCurrencies, useLatest, useRecent } from '../lib/queries'
 import { useStore } from '../store'
+import { useT } from '../i18n'
 import { currencyName } from '../lib/currency'
 import { CurrencySelect } from './CurrencySelect'
 import { Sparkline } from './Sparkline'
@@ -10,42 +13,45 @@ import { Sparkline } from './Sparkline'
  * Kur tablosu: "1 USD kaç TRY?" şeklinde gösterir (ana para birimi karşılığı).
  * API base=ana birim verdiği için oranı ters çeviriyoruz.
  */
-export function RatesBoard({ onPick }: { onPick: (code: string) => void }) {
+export function RatesBoard({ limit, initialAll = false }: { limit?: number; initialAll?: boolean }) {
+  const navigate = useNavigate()
+  const t = useT().board
   const { base, setBase, favorites, toggleFavorite } = useStore()
   const [query, setQuery] = useState('')
-  const [showAll, setShowAll] = useState(false)
+  const [showAll, setShowAll] = useState(initialAll)
   const { data: currencies } = useCurrencies()
   const { data: latest, isLoading } = useLatest(base)
 
   const codes = useMemo(() => {
     const all = currencies ? Object.keys(currencies).filter((c) => c !== base) : []
-    const q = query.trim().toLocaleLowerCase('tr')
+    const q = query.trim().toLocaleLowerCase()
     const list = q
-      ? all.filter((c) => c.toLowerCase().includes(q) || currencyName(c).toLocaleLowerCase('tr').includes(q))
+      ? all.filter((c) => c.toLowerCase().includes(q) || currencyName(c).toLocaleLowerCase().includes(q))
       : showAll
         ? all
         : favorites.filter((f) => f !== base)
-    return [...list].sort((a, b) => Number(favorites.includes(b)) - Number(favorites.includes(a)))
-  }, [currencies, base, query, showAll, favorites])
+    const sorted = [...list].sort((a, b) => Number(favorites.includes(b)) - Number(favorites.includes(a)))
+    return limit ? sorted.slice(0, limit) : sorted
+  }, [currencies, base, query, showAll, favorites, limit])
 
   const { data: recent } = useRecent(base, codes)
 
   return (
     <section className="card">
       <div className="mb-4 flex flex-wrap items-center gap-2">
-        <h2 className="mr-auto text-sm font-semibold uppercase tracking-wider text-zinc-500">Kur Tablosu</h2>
-        <CurrencySelect label="Ana para birimi" value={base} onChange={setBase} className="h-9 w-auto" />
+        <h2 className="mr-auto text-sm font-semibold uppercase tracking-wider text-zinc-500">{t.title}</h2>
+        <CurrencySelect label={t.base} value={base} onChange={setBase} className="h-9 w-auto" />
       </div>
 
       <div className="mb-3 flex gap-2">
         <input
           className="field h-9"
-          placeholder="Para birimi ara (ör. dolar, JPY)…"
+          placeholder={t.search}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
         <button className="btn-ghost shrink-0" onClick={() => setShowAll((v) => !v)}>
-          {showAll ? 'Favoriler' : 'Tümü'}
+          {showAll ? t.favs : t.all}
         </button>
       </div>
 
@@ -68,13 +74,13 @@ export function RatesBoard({ onPick }: { onPick: (code: string) => void }) {
             return (
               <li key={c} className="flex items-center gap-3 py-2.5">
                 <button
-                  aria-label={fav ? 'Favorilerden çıkar' : 'Favorilere ekle'}
-                  className={`text-lg transition ${fav ? 'text-amber-400' : 'text-zinc-300 hover:text-amber-400 dark:text-zinc-600'}`}
+                  aria-label={fav ? t.removeFav : t.addFav}
+                  className={`transition ${fav ? 'text-amber-400' : 'text-zinc-300 hover:text-amber-400 dark:text-zinc-600'}`}
                   onClick={() => toggleFavorite(c)}
                 >
-                  ★
+                  <Star className="size-4" fill={fav ? 'currentColor' : 'none'} />
                 </button>
-                <button className="min-w-0 flex-1 text-left" onClick={() => onPick(c)}>
+                <button className="min-w-0 flex-1 text-left" onClick={() => navigate(`/cevirici?amount=1&from=${c}&to=${base}`)}>
                   <div className="font-semibold">{c}</div>
                   <div className="truncate text-xs text-zinc-500">{currencyName(c)}</div>
                 </button>
@@ -91,12 +97,10 @@ export function RatesBoard({ onPick }: { onPick: (code: string) => void }) {
             )
           })}
         {latest && codes.length === 0 && (
-          <li className="py-6 text-center text-sm text-zinc-500">Sonuç yok. Yıldızla favori ekleyebilirsin.</li>
+          <li className="py-6 text-center text-sm text-zinc-500">{t.empty}</li>
         )}
       </ul>
-      <p className="mt-3 text-xs text-zinc-500">
-        Değerler 1 birimin {base} karşılığıdır. Satıra tıklayınca çevirici ve grafik o para birimine geçer.
-      </p>
+      <p className="mt-3 text-xs text-zinc-500">{t.note(base)}</p>
     </section>
   )
 }
