@@ -92,8 +92,8 @@ const tr = {
     stats: [
       ['30+', 'Para birimi'],
       ['25 yıl', 'Geçmiş veri'],
-      ['48 bin', 'Aylık çeviri'],
-      ['%99,9', 'Erişilebilirlik'],
+      ['0', 'Reklam'],
+      ['%100', 'Açık kaynak'],
     ],
     faqTitle: 'Sık sorulan sorular',
     faqLead: 'Aradığını bulamadın mı?',
@@ -151,7 +151,7 @@ const tr = {
   contact: {
     eyebrow: 'İletişim',
     title: 'Bize ulaş',
-    desc: 'Öneri, hata bildirimi ya da iş birliği için formu doldurman yeterli.',
+    desc: 'Öneri, hata bildirimi ya da iş birliği için formu doldurabilirsin. (Demo form: mesajlar bir sunucuya gönderilmez.)',
     sent: 'Mesajın alındı, teşekkürler. En kısa sürede dönüş yapacağız.',
     name: 'Ad soyad',
     email: 'E-posta',
@@ -162,7 +162,7 @@ const tr = {
     send: 'Gönder',
     sending: 'Gönderiliyor…',
     info: [
-      ['E-posta', 'merhaba@kur.app'],
+      ['E-posta', 'ornek@example.com'],
       ['Konum', 'İstanbul, Türkiye'],
       ['Yanıt süresi', 'Genellikle 1 iş günü'],
     ],
@@ -264,8 +264,8 @@ const en: Dict = {
     stats: [
       ['30+', 'Currencies'],
       ['25 yrs', 'Historical data'],
-      ['48K', 'Monthly conversions'],
-      ['99.9%', 'Uptime'],
+      ['0', 'Ads'],
+      ['100%', 'Open source'],
     ],
     faqTitle: 'Frequently asked questions',
     faqLead: 'Can’t find what you’re looking for?',
@@ -323,7 +323,7 @@ const en: Dict = {
   contact: {
     eyebrow: 'Contact',
     title: 'Get in touch',
-    desc: 'Fill in the form for suggestions, bug reports or partnerships.',
+    desc: 'Use the form for suggestions, bug reports or partnerships. (Demo form: messages are not sent to a server.)',
     sent: 'Thanks, your message was received. We will get back to you soon.',
     name: 'Full name',
     email: 'Email',
@@ -334,7 +334,7 @@ const en: Dict = {
     send: 'Send',
     sending: 'Sending…',
     info: [
-      ['Email', 'hello@kur.app'],
+      ['Email', 'demo@example.com'],
       ['Location', 'Istanbul, Türkiye'],
       ['Response time', 'Usually 1 business day'],
     ],

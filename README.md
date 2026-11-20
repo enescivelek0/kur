@@ -67,8 +67,8 @@ npm run screenshots  # README görsellerini yeniden üretir (dev sunucusu açık
 
 ## Notlar
 
-Kurlar ECB tarafından iş günlerinde ~16:00 CET'te güncellenir; anlık piyasa fiyatı değildir. İletişim formu ve tanıtım istatistikleri demo amaçlıdır. Yatırım tavsiyesi değildir.
+Kurlar ECB tarafından iş günlerinde ~16:00 CET'te güncellenir; anlık piyasa fiyatı değildir. İletişim formu ve iletişim bilgileri demo amaçlıdır; form hiçbir veri göndermez. Yatırım tavsiyesi değildir.
 
 ---
 
-Geliştiren: [Enes Civelek](https://enescivelek.com)
+Geliştiren: [Enes Civelek](https://enescivelek.com) · Lisans: [MIT](LICENSE)
